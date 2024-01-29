@@ -65,7 +65,7 @@ jobs:
 
       - name: Deploy moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
           # Add dirs to $PATH
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
@@ -79,45 +79,45 @@ jobs:
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
           IGNORE_PATHS: 'tool/printable/classes/bfpdf.php'
 
-      - name: phplint
+      - name: PHP Lint
         if: ${{ always() }}
         run: moodle-plugin-ci phplint
 
-      - name: phpcpd
+      - name: PHP Copy/Paste Detector
         if: ${{ always() }}
-        run: moodle-plugin-ci phpcpd || true
+        run: moodle-plugin-ci phpcpd
 
-      - name: phpmd
+      - name: PHP Mess Detector
         if: ${{ always() }}
         run: moodle-plugin-ci phpmd
 
-      - name: codechecker
+      - name: Moodle Code Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci codechecker
+        run: moodle-plugin-ci phpcs --max-warnings 0
 
       - name: Moodle PHPDoc Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci phpdoc
+        run: moodle-plugin-ci phpdoc --max-warnings 0
 
-      - name: validate
+      - name: Validating
         if: ${{ always() }}
         run: moodle-plugin-ci validate
 
-      - name: savepoints
+      - name: Check upgrade savepoints
         if: ${{ always() }}
         run: moodle-plugin-ci savepoints
 
-      - name: mustache
+      - name: Mustache Lint
         if: ${{ always() }}
         run: moodle-plugin-ci mustache
 
-      - name: grunt
+      - name: Grunt
         if: ${{ always() }}
-        run: moodle-plugin-ci grunt
+        run: moodle-plugin-ci grunt --max-lint-warnings 0
 
-      - name: phpunit
+      - name: PHPUnit tests
         if: ${{ always() }}
-        run: moodle-plugin-ci phpunit
+        run: moodle-plugin-ci phpunit --fail-on-warning
 
       - name: behat
         if: ${{ always() }}
